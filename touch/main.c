@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
 
@@ -17,7 +18,6 @@ int main(int argc, char **argv) {
   }
 
   char *filename = argv[1];
-  printf("file: %s\n", filename);
 
   int fd = open(filename, O_CREAT);
   if (fd < 0) {
@@ -25,7 +25,14 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  printf("fd: %d", fd);
+  struct timespec ts = getCurrentTime();
+  struct timespec tsa[] = {ts, ts};
+
+  int f = futimens(fd, tsa);
+  if (f < 0) {
+    perror("failed to set time");
+    return 1;
+  }
 
   return 0;
 }
