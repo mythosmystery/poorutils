@@ -4,12 +4,6 @@
 #include <sys/types.h>
 #include <time.h>
 
-struct timespec getCurrentTime(void) {
-  time_t t = time(NULL);
-  struct timespec ts = {.tv_sec = t, .tv_nsec = 0};
-  return ts;
-}
-
 int main(int argc, char **argv) {
 
   if (argc < 2) {
@@ -17,7 +11,7 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  char *filename = argv[1];
+  char *filename = argv[argc - 1];
 
   int fd = open(filename, O_CREAT);
   if (fd < 0) {
@@ -25,7 +19,8 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  struct timespec ts = getCurrentTime();
+  time_t t = time(NULL);
+  struct timespec ts = {.tv_sec = t, .tv_nsec = 0};
   struct timespec tsa[] = {ts, ts};
 
   int f = futimens(fd, tsa);
